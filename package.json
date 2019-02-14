@@ -1,0 +1,14 @@
+{
+  "name": "cloud-323",
+  "version": "0.1.0",
+  "description": "CLC",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
