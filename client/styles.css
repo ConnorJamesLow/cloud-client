@@ -15,6 +15,10 @@
   color: #1976d2;
 }
 
+.app-text {
+  color: #7B1FA2;
+}
+
 .app-bg-p {
   background: #7B1FA2;
 }
@@ -70,8 +74,11 @@
 }
 
 .app-message {
-  display: flex;
   margin-bottom: 1rem;
+}
+
+.app-message-content {
+  display: flex;
 }
 
 .app-message-sender {
@@ -118,4 +125,8 @@
   cursor: not-allowed;
   background: lightgrey;
   color: grey;
+}
+
+.app-message-tool {
+  cursor: pointer;
 }

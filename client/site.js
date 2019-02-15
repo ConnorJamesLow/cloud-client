@@ -3,7 +3,7 @@ function init() {
   App.actions.loadMessages();
   App.dom.updateName();
   App.elements.input.keyup((ev) => {
-    if (ev.which === 13 && App.elements.input.val().trim().length > 0) {
+    if (ev.which === 13) {
       App.actions.sendMessage();
     }
   });

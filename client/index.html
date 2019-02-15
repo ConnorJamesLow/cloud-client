@@ -9,6 +9,8 @@
   <!-- Dependencies -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css"
     integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"
     integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
@@ -18,8 +20,9 @@
     integrity="sha384-7aThvCh9TypR7fIc2HV4O/nFMVCBwyIUKL8XCtKE+8xgCgl/PQGuFsvShjr74PBp"
     crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.js"></script>
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
-    integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="sweetalert2.min.css" />
+  <script src="sweetalert2.min.js"></script>
   <!-- Custom -->
   <link rel="stylesheet" type="text/css" media="screen" href="styles.css">
   <script src="Messaging.js"></script>
@@ -66,9 +69,10 @@
                       Message
                     </div>
                   </div>
-                  <input class="form-control app-border-light app-bg-p-light app-text-dark" id="message-input" />
+                  <input class="form-control app-border-light app-bg-p-light app-text-dark" id="message-input"
+                    maxlength="140" />
                   <div class="input-group-append">
-                    <button class="btn app-btn-outline-s" onclick="App.actions.sendMessage()"><i
+                    <button class="btn app-btn-outline-s px-3" onclick="App.actions.sendMessage()"><i
                         class="fas fa-paper-plane"></i></button>
                   </div>
                 </div>

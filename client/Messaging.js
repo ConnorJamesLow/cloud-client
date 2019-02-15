@@ -27,6 +27,7 @@ function initApp() {
       API_URL: location.href.indexOf('localhost') > 0
         ? 'http://localhost:8080/AnotherCloudApp/messaging'
         : 'https://gcucloud.herokuapp.com/messaging',
+      // API_URL: 'https://gcucloud.herokuapp.com/messaging',
       LOAD_SIZE: 10,
     },
     state: {
@@ -46,8 +47,8 @@ function initApp() {
       })()
     },
     requests: {
-      getMessageRange: (offset, count) => {
-        const options = App.helpers.getOptions('GET', `getmessages?offset=${offset}&count=${count}`);
+      getMessageRange: (index, count) => {
+        const options = App.helpers.getOptions('GET', `getmessages?index=${index}&count=${count}`);
         return $.ajax(options);
       },
       sendMessage: (message) => {
@@ -61,12 +62,23 @@ function initApp() {
         options.headers["Content-Type"] = 'application/json';
         console.log(options);
         return $.ajax(options);
+      },
+      updateMessage: (message, id) => {
+        const options = App.helpers.getOptions('PUT', 'updatemessage');
+        options.data = JSON.stringify({
+          'id': id,
+          'messagebody': message
+        });
+        options.processData = false;
+        options.headers["Content-Type"] = 'application/json';
+        return $.ajax(options);
+      },
+      deleteMessage: (id) => {
+        const options = App.helpers.getOptions('DELETE', `deletemessage/${id}`);
+        return $.ajax(options);
       }
     },
     helpers: {
-      updateOffset: () => {
-        App.state.offset += App.constants.LOAD_SIZE;
-      },
       getOptions(method, uri) {
         return {
           async: true,
@@ -89,30 +101,58 @@ function initApp() {
             App.dom.disableLoader();
           }
         });
-        App.helpers.updateOffset();
       },
       sendMessage: () => {
         const message = App.elements.input.val();
-        App.requests.sendMessage(message).done(response => {
-          App.dom.appendMessagesToChat([{
-            messagebody: message,
-            sender: App.state.name
-          }]);
-          App.dom.clearMessageBox();
+        if (message.trim().length > 0) {
+          App.requests.sendMessage(message).done(() => {
+            App.dom.appendMessagesToChat([{
+              messagebody: message,
+              sender: App.state.name
+            }]);
+            App.dom.clearMessageBox();
+          });
+        }
+      },
+      updateMessage: (id) => {
+        const message = $('#update-input').val();
+        App.requests.updateMessage(message, id).done(() => {
+          App.dom.destoryEditor();
+          $(`#payload-${id}`).html(message);
         });
+      },
+      deleteMessage: (id) => {
+        const confirmDelete = function (result) {
+          if (result.value) {
+            App.requests.deleteMessage(id).done(() => {
+              $(`#message-${id}`).remove();
+            });
+          }
+          else {
+            swal('Deletion canceled!', '', 'info');
+          }
+        };
+        swalO = {
+          title: 'Confirm',
+          text: 'Are you sure you want to delete this message?',
+          type: 'warning',
+          showCancelButton: true,
+        };
+        swal(swalO).then(confirmDelete);
       },
       setName: () => {
         const name = $('#name-input').val();
         Utils.setCookie('nickname', name, 14);
         App.state.name = name;
-        App.dom.destroyNicknameChooser();
+        App.dom.destoryEditor();
       }
     },
     dom: {
       prependMessagesToChat: (data) => {
         data.forEach((message) => {
-          const html = App.templates.message(message.sender, message.messagebody, message.sender === App.state.name);
+          const html = App.templates.message(message.sender, message.messagebody, message.id, message.creationdate);
           App.elements.messages.prepend(html);
+          App.state.offset = message.id;
         });
       },
       appendMessagesToChat: (data) => {
@@ -126,8 +166,12 @@ function initApp() {
       clearMessageBox: () => {
         App.elements.input.val('');
       },
-      destroyNicknameChooser: () => {
-        console.log('destroy!');
+      showEditor: (id) => {
+        const message = $(`#message-${id}`);
+        const text = message.data('message');
+        $('body').prepend(App.templates.messageEditor(id, text));
+      },
+      destoryEditor: () => {
         $('#overlay').addClass('d-none');
         $('#overlay').removeClass('d-flex');
         $('#overlay').html('');
@@ -144,14 +188,68 @@ function initApp() {
       }
     },
     templates: {
-      message: (name, message, isUser = false) => {
+      message: (name, message, id, creationdate) => {
+        const isUser = name === App.state.name;
         return `
-          <div class="app-message${isUser ? ' self' : ''}">
-            <div class="app-message-sender">
-              ${name}
+          <div class="app-message${isUser ? ' self' : ''}" id="message-${id}"
+              data-sender="${name}" data-message="${message}" data-id="${id}" data-creationdate="${creationdate}">
+            <div class="app-message-content">
+              <div class="app-message-sender" id="sender-${id}">
+                ${name}
+              </div>
+              <div class="app-message-payload" id="payload-${id}">
+                ${message}
+              </div>
             </div>
-            <div class="app-message-payload">
-              ${message}
+            <div class="message-meta d-flex justify-content-between mx-2">
+              <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('dddd MMM D, Y @ hh:MM A')}</div>
+              ${isUser ? `<div class="d-flex">
+                <div class="app-message-tool mr-2 app-text" onclick="App.dom.showEditor(${id})">
+                  <i class="fas fa-edit"></i>
+                </div>
+                <div class="app-message-tool mr-2 app-text" onclick="App.actions.deleteMessage(${id})">
+                  <i class="fas fa-eraser"></i>
+                </div>
+              </div>` : '<div></div>'}
+            </div>
+          </div>`;
+      },
+      nickname: () => {
+        return `
+          <div class="align-items-center h-100 justify-content-around position-absolute w-100 app-overlay d-none" id="overlay">
+            <div id="name" class="rounded p-4 w-50 app-bg-p app-border text-white">
+              <div class="mb-3">
+                <h4>Who are you?</h4>
+              </div>
+              <div class="input-group input-group-lg mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text app-bg-p-dark text-light app-border">Nickname</span>
+                </div>
+                <input class="form-control" id="name-input" maxlength="24" />
+              </div>
+              <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.actions.setName()">Okay, let's chat</button>
+            </div>
+          </div>`;
+      },
+      messageEditor: (id, message) => {
+        return `
+          <div class="align-items-center h-100 justify-content-around position-absolute w-100 app-overlay d-flex" id="overlay">
+            <div id="name" class="rounded p-4 w-50 app-bg-p app-border text-white">
+              <div class="mb-3">
+                <h4>Who are you?</h4>
+              </div>
+              <div class="input-group input-group-lg mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text app-bg-p-dark text-light app-border">Message</span>
+                </div>
+                <input class="form-control" id="update-input" maxlength="140" value="${message}"/>
+              </div>
+              <div class="mb-3">
+                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.actions.updateMessage(${id})">Update it</button>
+              </div>
+              <div class="mb-3">
+                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.dom.destoryEditor()">Wait, cancel</button>
+              </div>
             </div>
           </div>`;
       }
