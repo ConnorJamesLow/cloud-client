@@ -24,14 +24,15 @@ function initApp() {
   };
   App = {
     constants: {
-      API_URL: location.href.indexOf('localhost') > 0
-        ? 'http://localhost:8080/AnotherCloudApp/messaging'
-        : 'https://gcucloud.herokuapp.com/messaging',
-      // API_URL: 'https://gcucloud.herokuapp.com/messaging',
+      // API_URL: location.href.indexOf('localhost') > 0
+      //   ? 'http://localhost:8080/AnotherCloudApp/messaging'
+      //   : 'https://gcucloud.herokuapp.com/messaging',
+      API_URL: 'https://gcucloud.herokuapp.com/messaging',
       LOAD_SIZE: 10,
     },
     state: {
       offset: 0,
+      topIndex: 0,
       name: (() => {
 
         // try to get the name from a cookie
@@ -47,6 +48,10 @@ function initApp() {
       })()
     },
     requests: {
+      getNewMessages: () => {
+        const options = App.helpers.getOptions('GET', `get-new-messages?index=${App.state.topIndex}`);
+        return $.ajax(options);
+      },
       getMessageRange: (index, count) => {
         const options = App.helpers.getOptions('GET', `getmessages?index=${index}&count=${count}`);
         return $.ajax(options);
@@ -92,10 +97,37 @@ function initApp() {
       }
     },
     actions: {
+      init: () => {
+        App.actions.loadMessages();
+        App.dom.updateName();
+        App.elements.input.keyup((ev) => {
+          if (ev.which === 13) {
+            App.actions.sendMessage();
+          }
+        });
+        App.state.listener = setInterval(App.actions.loadRecent, 1500);
+      },
+      loadRecent: () => {
+        const promise = App.requests.getNewMessages();
+        promise.done(response => {
+          if (response.length > 0) {
+            const recent = response[response.length - 1].id;
+            console.log('recent:', recent, 'top index:', App.state.topIndex);
+            if (recent > App.state.topIndex) {
+              App.state.topIndex = recent;
+              App.dom.appendMessagesToChat(response);
+            }
+          }
+        });
+      },
       loadMessages: () => {
         const promise = App.requests.getMessageRange(App.state.offset, App.constants.LOAD_SIZE);
         promise.done(response => {
           if (response.length > 0) {
+            if (App.state.topIndex === 0) {
+              App.state.topIndex = response[0].id;
+              console.log(App.state.topIndex);
+            }
             App.dom.prependMessagesToChat(response);
           } else {
             App.dom.disableLoader();
@@ -106,10 +138,10 @@ function initApp() {
         const message = App.elements.input.val();
         if (message.trim().length > 0) {
           App.requests.sendMessage(message).done(() => {
-            App.dom.appendMessagesToChat([{
-              messagebody: message,
-              sender: App.state.name
-            }]);
+            // App.dom.appendMessagesToChat([{
+            //   messagebody: message,
+            //   sender: App.state.name
+            // }]);
             App.dom.clearMessageBox();
           });
         }
