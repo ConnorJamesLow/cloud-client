@@ -234,7 +234,7 @@ function initApp() {
               </div>
             </div>
             <div class="message-meta d-flex justify-content-between mx-2">
-              <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('dddd MMM D, Y @ hh:MM A')}</div>
+              <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('dddd MMM DD, Y @ hh:mm A')}</div>
               ${isUser ? `<div class="d-flex">
                 <div class="app-message-tool mr-2 app-text" onclick="App.dom.showEditor(${id})">
                   <i class="fas fa-edit"></i>
