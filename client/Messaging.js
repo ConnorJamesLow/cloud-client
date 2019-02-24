@@ -377,16 +377,13 @@ function initApp() {
                 <h4>Update</h4>
               </div>
               <div class="input-group input-group-lg mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text app-bg-p-dark text-light app-border">Message</span>
-                </div>
                 <input class="form-control" id="update-input" maxlength="140" value="${message}"/>
               </div>
               <div class="mb-3">
-                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.actions.updateMessage(${id})">Update it</button>
+                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.actions.updateMessage(${id})">Update!</button>
               </div>
               <div class="mb-3">
-                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.dom.destoryEditor()">Wait, cancel</button>
+                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.dom.destoryEditor()">Wait, cancel.</button>
               </div>
             </div>
           </div>`;
