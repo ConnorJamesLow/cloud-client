@@ -330,23 +330,22 @@ function initApp() {
               data-sender="${name}" data-message="${message}" data-id="${id}" data-creationdate="${creationdate}">
             <div class="app-message-content">
               <div class="app-message-sender" id="sender-${id}">
-                ${name}
-              </div>
-              <div class="app-message-payload" id="payload-${id}">
-                ${message}
+                ${name}: <div class="app-message-payload" id="payload-${id}">${message}</div>
               </div>
             </div>
-            <div class="message-meta d-flex justify-content-between mx-2">
-              <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('dddd MMM DD, Y @ hh:mm A')}</div>
-              ${isUser ? `<div class="d-flex">
-                <div class="app-message-tool mr-2 app-text" onclick="App.dom.showEditor(${id})">
-                  <i class="fas fa-edit"></i>
-                </div>
-                <div class="app-message-tool mr-2 app-text" onclick="App.actions.deleteMessage(${id})">
-                  <i class="fas fa-eraser"></i>
-                </div>
-              </div>` : '<div></div>'}
-            </div>
+			<div class="message-info${isUser ? ' self' : ''}">
+				<div class="message-meta d-flex">
+				  <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('dddd MMM DD, Y @ hh:mm A')}</div>
+				  ${isUser ? `<div class="d-flex">
+					<div class="app-message-tool mr-2 app-text message-edit" onclick="App.dom.showEditor(${id})">
+					  <i class="fas fa-edit"></i>
+					</div>
+					<div class="app-message-tool mr-2 app-text" onclick="App.actions.deleteMessage(${id})">
+					  <i class="fas fa-eraser"></i>
+					</div>
+				  </div>` : '<div></div>'}
+				</div>
+			</div>
           </div>`;
       },
 
@@ -375,7 +374,7 @@ function initApp() {
           <div class="align-items-center h-100 justify-content-around position-absolute w-100 app-overlay d-flex" id="overlay">
             <div id="name" class="rounded p-4 w-50 app-bg-p app-border text-white">
               <div class="mb-3">
-                <h4>Who are you?</h4>
+                <h4>Update</h4>
               </div>
               <div class="input-group input-group-lg mb-3">
                 <div class="input-group-prepend">

@@ -1,132 +1,221 @@
 .app-overlay {
-  z-index: 100;
-  background: #FFFA;
+	z-index: 100;
+	background: #FFFA;
 }
 
 .app-text-dark {
-  color: #4A0072;
+	color: #4A0072;
 }
 
 .app-text-light {
-  color: #AE52D4;
+	color: #AE52D4;
 }
 
 .app-text-s {
-  color: #1976d2;
+	color: #1976d2;
 }
 
 .app-text {
-  color: #7B1FA2;
-}
-
-.app-bg-p {
-  background: #7B1FA2;
+	color: #7B1FA2;
 }
 
 .app-bg-p-dark {
-  background: #4A0072;
+	background: #E8E8E8;
+}
+
+.input-group-text.app-bg-p-dark.text-light {
+	background: #1976d2;
+}
+
+.card-footer {
+	background: #D0D0D0;
+}
+
+.card-header {
+	background: #1976d2;
 }
 
 .app-bg-p-light {
-  background: #AE52D4;
+	background: #F0F0F0;
 }
 
 .app-bg-s {
-  background: #1976d2;
+	background: #1976d2;
 }
 
 .app-border {
-  border: 1px solid #AE52D4;
+	border: none;
 }
 
 .app-border-p-dark {
-  border: 1px solid #4A0072;
+	border: 1px solid #4A0072;
 }
 
 .app-border-p {
-  border-color: #7B1FA2 !important;
+	border-color: #7B1FA2 !important;
 }
 
 .app-border-light {
-  border-color: #FFF;
+	border-color: #FFF;
 }
 
 .app-btn-outline-p {
-  color: #7B1FA2;
-  border-color: #7B1FA2;
+	color: #7B1FA2;
+	border-color: #7B1FA2;
 }
 
 .app-btn-outline-p:hover {
-  color: #FFF;
-  background-color: #7B1FA2;
-  border-color: #7B1FA2;
+	color: #FFF;
+	background-color: #7B1FA2;
+	border-color: #7B1FA2;
 }
 
 .app-btn-outline-s {
-  color: #FFF;
-  border-color: #FFF;
+	color: #FFF;
+	background-color: #1976d2;
+	border-color: #FFF;
 }
 
 .app-btn-outline-s:hover {
-  color: #7B1FA2;
-  background-color: #FFF;
-  border-color: #FFF;
+	color: #1976d2;
+	background-color: #FFF;
+	border-color: #FFF;
 }
 
 .app-message {
-  margin-bottom: 1rem;
+	margin-bottom: 1rem;
 }
 
 .app-message-content {
-  display: flex;
+	display: flex;
+}
+
+.rounded.p-4.w-50.app-bg-p.app-border.text-white {
+	background-color: #D0D0D0;
+}
+
+h4 {
+	color: #000000;
+}
+
+.app-message.self {
+	display: grid;
 }
 
 .app-message-sender {
-  background: #1976d2;
-  border-radius: 0.25rem;
-  color: #FFF;
-  padding: 4px 8px;
-  margin-right: auto !important;
-  max-width: 24%;
+	background: #D0D0D0;
+	border-radius: 0.25rem;
+	color: #000000;
+	padding: 4px 8px;
 }
 
 .self .app-message-sender {
-  background: #7B1FA2;
-  /* border: 1px #1976d2 solid !important;
-  background: #FFF !important;
-  color: #1976d2 !important; */
+	background: #1976d2;
+	color: #FFF;
+	margin-left: auto;
 }
 
+.self .message-meta {
+	float: right;
+}
+/**
+	For app-message-sender
+
+	min-width: 80px;
+	max-width: 80px;
+	max-height: 32px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	display: block;
+	overflow: hidden;
+**/
 .app-message-payload {
-  margin-left: auto !important;
-  max-width: 74%;
-  border: 1px #1976d2 solid;
-  padding: 4px 12px;
-  border-radius: 0 .25rem .25rem .25rem;
+	display: inline;
+}
+	
+.self .app-message-payload {
+	border-color: #7B1FA2;
+	background: #1976d2;
+	color: #FFF;
+}
+/**
+.app-load-messages {
+	background: #FFF;
+	border-color: #FFF;
+	color: #1976d2 !important;
+	text-align: center;
+	padding: 4px 0;
+	cursor: pointer;
+	border-radius: .25rem .25rem .25rem .25rem;
 }
 
-.self .app-message-payload {
-  border-color: #7B1FA2;
+.app-load-messages:hover {
+	background: #1976d2;
+	color: #FFF !important;
 }
+**/
 
 .app-load-messages {
-  background: #1976d2;
-  text-align: center;
-  padding: 4px 0;
-  cursor: pointer;
+	text-align: center;
+	padding: 2px 0;
+	cursor: pointer;
+	background-size: 100% 200%;
+	background-image: linear-gradient(to bottom, transparent 50%, #1976d2 50%);
+	transition: background-position 0.5s;
+	border-radius: .25rem .25rem .25rem .25rem;
+}
+
+.app-load-messages:hover {
+	background-position: 0 -100%;
+}
+
+.app-load-messages-text {
+	text-align: center;
+	color: #1976d2 !important;
+}
+
+.app-load-messages-text:hover {
+	color: #FFF !important;
 }
 
 .card-body {
-  overflow-y: scroll;
-  height: 70vh;
+	overflow-y: scroll;
+	height: 70vh;
 }
 
 .app-disabled {
-  cursor: not-allowed;
-  background: lightgrey;
-  color: grey;
+	cursor: not-allowed;
+	background: lightgrey;
+	color: grey;
 }
 
 .app-message-tool {
-  cursor: pointer;
+	margin-top: -7%;
+	cursor: pointer;
+	color: #808080 !important;
+}
+
+.app-message-tool.mr-2.app-text.message-edit {
+	padding-left: 15px;
+}
+
+::-webkit-scrollbar {
+	width: 8px;
+	background-color: rgba(0, 0, 0, 0);
+	-webkit-border-radius: 100px;
+}
+
+::-webkit-scrollbar:hover {
+	background-color: rgba(0, 0, 0, 0.09);
+}
+
+
+::-webkit-scrollbar-thumb:vertical {
+	background: #D0D0D0;
+	-webkit-border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:vertical:active {
+	background: rgba(0, 0, 0, 0.61);
+	-webkit-border-radius: 100px;
 }
