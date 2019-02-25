@@ -1,3 +1,8 @@
+.container {
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+}
+
 .app-overlay {
 	z-index: 100;
 	background: #FFF;
@@ -233,5 +238,14 @@ h4 {
 @media only screen and (max-width: 1025px) {
 	.w-50 {
 		width: 90% !important;
+	}
+	.p-4 {
+		padding: 0 !important;
+	}
+	.card {
+		height: 100vh !important;
+	}
+	.container {
+		overflow: hidden !important;
 	}
 }
