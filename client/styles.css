@@ -88,10 +88,14 @@
 
 .app-message {
 	margin-bottom: 1rem;
+	max-width: 100%;
+	display: flex;
+	clear: both;
+	flex-direction: column;
 }
 
 .app-message-content {
-	display: flex;
+	order: 1;
 }
 
 .rounded.p-4.w-50.app-bg-p.app-border.text-white {
@@ -100,10 +104,6 @@
 
 h4 {
 	color: #000000;
-}
-
-.app-message.self {
-	display: grid;
 }
 
 .app-message-sender {
@@ -116,26 +116,12 @@ h4 {
 	display: inline-block;
 }
 
-.self .app-message-sender {
-	background: #1976d2;
-	color: #FFF;
+.spacing {
 	margin-left: auto;
 }
-
-.self .message-meta {
-	float: right;
-}
-
 .app-message-payload {
 	display: inline;
 }
-	
-.self .app-message-payload {
-	border-color: #7B1FA2;
-	background: #1976d2;
-	color: #FFF;
-}
-
 .app-load-messages {
 	text-align: center;
 	padding: 2px 0;
@@ -180,6 +166,40 @@ h4 {
 	padding-left: 15px;
 }
 
+.message-info {
+	order: 2;
+}
+
+.app-message-timestamp-itsy-bitsy {
+	display: none;
+}
+
+.self .app-message-content {
+	float: right;
+}
+
+.app-message.self {
+	float: right;
+}
+
+.self .app-message-sender {
+	background: #1976d2;
+	color: #FFF;
+	float: right;
+}
+
+.message-info.self {
+	float: right;
+}
+
+.d-flex {
+	order: 2;
+}
+
+.self .message-meta.d-flex {
+	float: right;
+}
+
 ::-webkit-scrollbar {
 	width: 8px;
 	background-color: rgba(0, 0, 0, 0);
@@ -202,12 +222,11 @@ h4 {
 }
 
 @media only screen and (max-width: 450px) {
-	.self .app-message-timestamp {
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		max-width: 180px;
-		display: block;
-		overflow: hidden;
+	.app-message-timestamp-itsy-bitsy {
+		display: unset;
+	}
+	.app-message-timestamp.small {
+		display: none;
 	}
 }
 

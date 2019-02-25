@@ -335,8 +335,9 @@ function initApp() {
             </div>
 			<div class="message-info${isUser ? ' self' : ''}">
 				<div class="message-meta d-flex">
-				  <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('dddd MMM DD, Y @ hh:mm A')}</div>
-				  ${isUser ? `<div class="d-flex">
+				  <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('ddd, MM/DD/YY @ hh:mm A')}</div>
+				  <div class="app-message-timestamp-itsy-bitsy small text-black-50">${moment(creationdate).format('MM/DD/YY')}</div>
+				  ${isUser ? `<div class="d-flex message-tools">
 					<div class="app-message-tool mr-2 app-text message-edit" onclick="App.dom.showEditor(${id})">
 					  <i class="fas fa-edit"></i>
 					</div>
