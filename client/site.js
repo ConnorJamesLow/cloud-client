@@ -1,6 +1,6 @@
 function init() {
   initApp();
-  App.actions.init();
+	App.actions.init();
 }
 
 $(document).ready(init);

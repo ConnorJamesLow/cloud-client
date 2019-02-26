@@ -134,10 +134,10 @@ function initApp() {
           if (ev.which === 13) {
             App.actions.sendMessage();
           }
-        });
+		});
 
         // listen for new messages.
-        App.state.listener = setInterval(App.actions.loadRecent, 1500);
+		App.state.listener = setInterval(App.actions.loadRecent, 1500);
       },
       loadRecent: () => {
 
@@ -261,7 +261,7 @@ function initApp() {
 
         // destroy the editor
         App.dom.destoryEditor();
-      }
+		}
     },
     dom: {
 
@@ -315,10 +315,10 @@ function initApp() {
         App.elements.name.html(App.state.name);
       },
 
-      // scroll to the bottom of the chat.
-      scrollToBottom: () => {
-        App.elements.card.scrollTop(App.elements.card[0].scrollHeight);
-      }
+		// scroll to the bottom of the chat.
+		scrollToBottom: setTimeout(() => {
+			App.elements.card.scrollTop(App.elements.card[0].scrollHeight);
+		}, 500)
     },
     templates: {
 
