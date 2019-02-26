@@ -316,9 +316,9 @@ function initApp() {
       },
 
 		// scroll to the bottom of the chat.
-		scrollToBottom: setTimeout(() => {
+		scrollToBottom: () => {
 			App.elements.card.scrollTop(App.elements.card[0].scrollHeight);
-		}, 500)
+		}
     },
     templates: {
 
