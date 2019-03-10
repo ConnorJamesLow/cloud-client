@@ -11,6 +11,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.listen(port, function () {
+app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`);
 });
