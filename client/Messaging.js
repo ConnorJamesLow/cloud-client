@@ -28,12 +28,10 @@ function initApp() {
   };
   App = {
     constants: {
-      // API_URL: location.href.indexOf('localhost') > 0
-      //   ? 'http://localhost:8080/AnotherCloudApp/messaging'
-      //   : 'https://gcucloud.herokuapp.com/messaging',
-
       // the base url for the API
-      API_URL: 'https://gcucloud.herokuapp.com/messaging',
+      API_URL: false
+        ? 'http://localhost:8080/AnotherCloudApp/messaging'
+        : 'https://gcucloud.herokuapp.com/messaging',
 
       // the number of messages to retrieve at once.
       LOAD_SIZE: 10,
