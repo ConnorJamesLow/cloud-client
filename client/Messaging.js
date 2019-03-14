@@ -146,10 +146,10 @@ function initApp() {
         promise.done(response => {
 
           // if messages are returned, add them to the chat box.
-          if (response.length > 0) {
+          if (response.data.length > 0) {
 
             // get the latest id
-            const recent = response[response.length - 1].id;
+            const recent = response.data[response.data.length - 1].id;
             console.log('recent:', recent, 'top index:', App.state.highIndex);
             if (recent > App.state.highIndex) {
 
@@ -157,7 +157,7 @@ function initApp() {
               App.state.highIndex = recent;
 
               // append the new messages
-              App.dom.appendMessagesToChat(response);
+              App.dom.appendMessagesToChat(response.data);
             }
           }
         });
@@ -169,14 +169,14 @@ function initApp() {
         promise.done(response => {
 
           // if results were returned add them to the page.
-          if (response.length > 0) {
+          if (response.data.length > 0) {
             if (App.state.highIndex === 0) {
 
               // if this is the first call, set the initial highest index
-              App.state.highIndex = response[0].id;
+              App.state.highIndex = response.data[0].id;
               console.log(App.state.highIndex);
             }
-            App.dom.prependMessagesToChat(response);
+            App.dom.prependMessagesToChat(response.data);
           } else {
 
             // assume there are no older messages and disable the button.
