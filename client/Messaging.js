@@ -132,10 +132,10 @@ function initApp() {
           if (ev.which === 13) {
             App.actions.sendMessage();
           }
-        });
+		});
 
         // listen for new messages.
-        App.state.listener = setInterval(App.actions.loadRecent, 1500);
+		App.state.listener = setInterval(App.actions.loadRecent, 1500);
       },
       loadRecent: () => {
 
@@ -144,10 +144,10 @@ function initApp() {
         promise.done(response => {
 
           // if messages are returned, add them to the chat box.
-          if (response.length > 0) {
+          if (response.data.length > 0) {
 
             // get the latest id
-            const recent = response[response.length - 1].id;
+            const recent = response.data[response.data.length - 1].id;
             console.log('recent:', recent, 'top index:', App.state.highIndex);
             if (recent > App.state.highIndex) {
 
@@ -155,7 +155,7 @@ function initApp() {
               App.state.highIndex = recent;
 
               // append the new messages
-              App.dom.appendMessagesToChat(response);
+              App.dom.appendMessagesToChat(response.data);
             }
           }
         });
@@ -167,14 +167,14 @@ function initApp() {
         promise.done(response => {
 
           // if results were returned add them to the page.
-          if (response.length > 0) {
+          if (response.data.length > 0) {
             if (App.state.highIndex === 0) {
 
               // if this is the first call, set the initial highest index
-              App.state.highIndex = response[0].id;
+              App.state.highIndex = response.data[0].id;
               console.log(App.state.highIndex);
             }
-            App.dom.prependMessagesToChat(response);
+            App.dom.prependMessagesToChat(response.data);
           } else {
 
             // assume there are no older messages and disable the button.
@@ -259,7 +259,7 @@ function initApp() {
 
         // destroy the editor
         App.dom.destoryEditor();
-      }
+		}
     },
     dom: {
 
@@ -313,10 +313,10 @@ function initApp() {
         App.elements.name.html(App.state.name);
       },
 
-      // scroll to the bottom of the chat.
-      scrollToBottom: () => {
-        App.elements.card.scrollTop(App.elements.card[0].scrollHeight);
-      }
+		// scroll to the bottom of the chat.
+		scrollToBottom: () => {
+			App.elements.card.scrollTop(App.elements.card[0].scrollHeight);
+		}
     },
     templates: {
 
@@ -328,23 +328,23 @@ function initApp() {
               data-sender="${name}" data-message="${message}" data-id="${id}" data-creationdate="${creationdate}">
             <div class="app-message-content">
               <div class="app-message-sender" id="sender-${id}">
-                ${name}
-              </div>
-              <div class="app-message-payload" id="payload-${id}">
-                ${message}
+                ${name}: <div class="app-message-payload" id="payload-${id}">${message}</div>
               </div>
             </div>
-            <div class="message-meta d-flex justify-content-between mx-2">
-              <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('dddd MMM DD, Y @ hh:mm A')}</div>
-              ${isUser ? `<div class="d-flex">
-                <div class="app-message-tool mr-2 app-text" onclick="App.dom.showEditor(${id})">
-                  <i class="fas fa-edit"></i>
-                </div>
-                <div class="app-message-tool mr-2 app-text" onclick="App.actions.deleteMessage(${id})">
-                  <i class="fas fa-eraser"></i>
-                </div>
-              </div>` : '<div></div>'}
-            </div>
+			<div class="message-info${isUser ? ' self' : ''}">
+				<div class="message-meta d-flex">
+				  <div class="app-message-timestamp small text-black-50">${moment(creationdate).format('ddd, MM/DD/YY @ hh:mm A')}</div>
+				  <div class="app-message-timestamp-itsy-bitsy small text-black-50">${moment(creationdate).format('MM/DD/YY')}</div>
+				  ${isUser ? `<div class="d-flex message-tools">
+					<div class="app-message-tool mr-2 app-text message-edit" onclick="App.dom.showEditor(${id})">
+					  <i class="fas fa-edit"></i>
+					</div>
+					<div class="app-message-tool mr-2 app-text" onclick="App.actions.deleteMessage(${id})">
+					  <i class="fas fa-eraser"></i>
+					</div>
+				  </div>` : '<div></div>'}
+				</div>
+			</div>
           </div>`;
       },
 
@@ -373,19 +373,16 @@ function initApp() {
           <div class="align-items-center h-100 justify-content-around position-absolute w-100 app-overlay d-flex" id="overlay">
             <div id="name" class="rounded p-4 w-50 app-bg-p app-border text-white">
               <div class="mb-3">
-                <h4>Who are you?</h4>
+                <h4>Update</h4>
               </div>
               <div class="input-group input-group-lg mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text app-bg-p-dark text-light app-border">Message</span>
-                </div>
                 <input class="form-control" id="update-input" maxlength="140" value="${message}"/>
               </div>
               <div class="mb-3">
-                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.actions.updateMessage(${id})">Update it</button>
+                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.actions.updateMessage(${id})">Update!</button>
               </div>
               <div class="mb-3">
-                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.dom.destoryEditor()">Wait, cancel</button>
+                <button class="btn app-btn-outline-s btn-block btn-lg" onclick="App.dom.destoryEditor()">Wait, cancel.</button>
               </div>
             </div>
           </div>`;
