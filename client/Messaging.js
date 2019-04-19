@@ -96,7 +96,7 @@ function initApp() {
        *
        * @returns the request Promise
        */
-      getNewMessages: () => {
+      getNewMessages() {
         const options = App.helpers.getOptions('GET', `get-new-messages?index=${App.state.highIndex}`);
         return $.ajax(options);
       },
@@ -108,7 +108,7 @@ function initApp() {
        * @param {number} count The number of prior messages to get.
        * @returns the request Promise
        */
-      getMessageRange: (index, count) => {
+      getMessageRange(index, count) {
         const options = App.helpers.getOptions('GET', `getmessages?index=${index}&count=${count}`);
         return $.ajax(options);
       },
@@ -119,7 +119,7 @@ function initApp() {
        * @param {string} message The message body.
        * @returns the request Promise
        */
-      sendMessage: (message) => {
+      sendMessage(message) {
         const options = App.helpers.getOptions('POST', 'sendmessage');
 
         // add data to options
@@ -132,7 +132,6 @@ function initApp() {
         // specify the body format
         options.processData = false;
         options.headers["Content-Type"] = 'application/json';
-        console.log(options);
 
         // return the request
         return $.ajax(options);
@@ -145,7 +144,7 @@ function initApp() {
        * @param {number} id The id of the message to update.
        * @returns the request Promise
        */
-      updateMessage: (message, id) => {
+      updateMessage(message, id) {
         const options = App.helpers.getOptions('PUT', 'updatemessage');
 
         // add data for update
@@ -166,7 +165,7 @@ function initApp() {
        * @param {number} id The id of the message to delete.
        * @returns the request Promise
        */
-      deleteMessage: (id) => {
+      deleteMessage(id) {
         const options = App.helpers.getOptions('DELETE', `deletemessage/${id}`);
         return $.ajax(options);
       }
@@ -205,7 +204,7 @@ function initApp() {
       /**
        * Inital setup. Call when the DOM is loaded.
        */
-      init: () => {
+      init() {
 
         // add the first ten messages to the chat.
         App.actions.loadMessages();
@@ -221,13 +220,13 @@ function initApp() {
         });
 
         // listen for new messages.
-        this.state.listener = setInterval(App.actions.loadRecent, 1500);
+        App.state.listener = setInterval(App.actions.loadRecent, 1500);
       },
 
       /**
        * Get new messages.
        */
-      loadRecent: () => {
+      loadRecent() {
 
         // send a request for the messages.
         const promise = App.requests.getNewMessages();
@@ -238,7 +237,6 @@ function initApp() {
 
             // get the latest id
             const recent = response.data[response.data.length - 1].id;
-            console.log('recent:', recent, 'top index:', App.state.highIndex);
             if (recent > App.state.highIndex) {
 
               // update the app state
@@ -254,7 +252,7 @@ function initApp() {
       /**
        * Get messages previous to the current oldest message.
        */
-      loadMessages: () => {
+      loadMessages() {
 
         // request a range of messages preceeding the current index of the oldest retrieved message
         const promise = App.requests.getMessageRange(App.state.lowIndex, App.constants.LOAD_SIZE);
@@ -266,7 +264,6 @@ function initApp() {
 
               // if this is the first call, set the initial highest index
               App.state.highIndex = response.data[0].id;
-              console.log(App.state.highIndex);
             }
             App.dom.prependMessagesToChat(response.data);
           } else {
@@ -280,7 +277,7 @@ function initApp() {
       /**
        * Send a message from the dom to the client.
        */
-      sendMessage: () => {
+      sendMessage() {
 
         // get the message from the messaging input
         const message = App.elements.input.val();
@@ -302,7 +299,7 @@ function initApp() {
        * 
        * @param {number} id The id of the message to update.
        */
-      updateMessage: (id) => {
+      updateMessage(id) {
 
         // get the message from the update input
         const message = $('#update-input').val();
@@ -327,7 +324,7 @@ function initApp() {
        * 
        * @param {number} id The id of the target message to delete.
        */
-      deleteMessage: (id) => {
+      deleteMessage(id) {
 
         // function to run once the user responds to our sweet alert.
         const confirmDelete = function (result) {
@@ -346,7 +343,7 @@ function initApp() {
         };
 
         // options for the sweet alert.
-        swalO = {
+        const swalO = {
           title: 'Confirm',
           text: 'Are you sure you want to delete this message?',
           type: 'warning',
@@ -360,7 +357,7 @@ function initApp() {
       /**
        * Update the username heading on the dom.
        */
-      setName: () => {
+      setName() {
 
         // get the nickname from the input.
         const name = $('#name-input').val();
@@ -386,7 +383,7 @@ function initApp() {
        * 
        * @param {[*]} data A list of messages to apply to the DOM.
        */
-      prependMessagesToChat: (data) => {
+      prependMessagesToChat(data) {
         data.forEach((message) => {
           const html = App.templates.message(
             message.sender, message.messagebody, message.id, message.creationdate
@@ -401,11 +398,10 @@ function initApp() {
        *
        * @param {[*]} data A list of messages to apply to the DOM.
        */
-      appendMessagesToChat: (data) => {
-        console.log(data);
+      appendMessagesToChat(data) {
         data.forEach((message) => {
           const html = App.templates.message(
-            message.sender, message.messagebody, message.sender === App.state.name
+            message.sender, message.messagebody, message.id, message.creationdate
           );
           App.elements.messages.append(html);
         });
@@ -415,14 +411,14 @@ function initApp() {
       /**
        * Empties the messaging input.
        */
-      clearMessageBox: () => {
+      clearMessageBox() {
         App.elements.input.val('');
       },
 
       /**
        * Reveals the update message editor.
        */
-      showEditor: (id) => {
+      showEditor(id) {
         const message = $(`#message-${id}`);
         const text = message.data('message');
         $('body').prepend(App.templates.messageEditor(id, text));
@@ -431,7 +427,7 @@ function initApp() {
       /**
        * Removes any overlays and editors.
        */
-      destoryEditor: () => {
+      destoryEditor() {
         $('#overlay').addClass('d-none');
         $('#overlay').removeClass('d-flex');
         $('#overlay').html('');
@@ -440,7 +436,7 @@ function initApp() {
       /**
        * Grey out the load message button and disable its functionality.
        */
-      disableLoader: () => {
+      disableLoader() {
         App.elements.loader.addClass('app-disabled');
         App.elements.loader.html('No more messages');
         App.elements.loader.attr('onclick', '');
@@ -450,14 +446,14 @@ function initApp() {
        * Update the chat title.
        * Uses the state.name property to determine which value to set as the title.
        */
-      updateName: () => {
+      updateName() {
         App.elements.name.html(App.state.name);
       },
 
       /**
        * Scroll to the bottom of the chat.
        */
-      scrollToBottom: () => {
+      scrollToBottom() {
         App.elements.card.scrollTop(App.elements.card[0].scrollHeight);
       }
     };
@@ -474,9 +470,9 @@ function initApp() {
        * @param {string} message The message body.
        * @param {number} id The id of the message.
        * @param {Date} creationdate The date the message was sent by the authoring user.
-       * @returns the html string with boud variables.
+       * @returns the html string with bound variables.
        */
-      message: (name, message, id, creationdate) => {
+      message(name, message, id, creationdate) {
         const isUser = name === App.state.name;
         return `
           <div class="app-message${isUser ? ' self' : ''}" id="message-${id}"
@@ -508,7 +504,7 @@ function initApp() {
        *
        * @returns The editor.
        */
-      nickname: () => {
+      nickname() {
         return `
           <div class="align-items-center h-100 justify-content-around position-absolute w-100 app-overlay d-none" id="overlay">
             <div id="name" class="rounded p-4 w-50 app-bg-p app-border text-white">
@@ -532,7 +528,7 @@ function initApp() {
        * @param {string} message The message body.
        * @returns The udpate message editor.
        */
-      messageEditor: (id, message) => {
+      messageEditor(id, message) {
         return `
           <div class="align-items-center h-100 justify-content-around position-absolute w-100 app-overlay d-flex" id="overlay">
             <div id="name" class="rounded p-4 w-50 app-bg-p app-border text-white">
