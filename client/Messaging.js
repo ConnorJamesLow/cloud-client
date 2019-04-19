@@ -1,8 +1,16 @@
 function initApp() {
-  Utils = {
 
-    // get a cookie from the document.cookie string
-    getCookie: (name) => {
+  /**
+   * Cookie utilities for the messaging application.
+   */
+  class Utils {
+
+    /**
+     * get a cookie from the document.cookie string
+     *
+     * @param {string} name The name of the cookie to get.
+     */
+    static getCookie(name) {
       const key = `${name}=`;
       const decodedCookie = decodeURIComponent(document.cookie);
       const ca = decodedCookie.split(';');
@@ -16,18 +24,32 @@ function initApp() {
         }
       }
       return false;
-    },
+    }
 
-    // add a new cookie to document.cookie
-    setCookie: (name, value, daysTillExpiration) => {
+    /**
+     * add a new cookie to document.cookie
+     *
+     * @param {string} name The name of the cookie to set.
+     * @param {string} value The value of the cookie.
+     * @param {number} daysTillExpiration The cookie lifetime in days.
+     */
+    static setCookie(name, value, daysTillExpiration) {
       const d = new Date();
       d.setTime(d.getTime() + (daysTillExpiration * 24 * 60 * 60 * 1000));
       const expires = `expires=${d.toUTCString()}`;
       document.cookie = `${name}=${value};${expires};path=/`;
     }
   };
-  App = {
-    constants: {
+
+  /**
+   * Core functions for the messaging application.
+   */
+  class App {
+
+    /**
+     * Defines constant values used within the App class.
+     */
+    static constants = {
       // the base url for the API
       API_URL: false
         ? 'http://localhost:8080/AnotherCloudApp/messaging'
@@ -35,8 +57,12 @@ function initApp() {
 
       // the number of messages to retrieve at once.
       LOAD_SIZE: 10,
-    },
-    state: {
+    };
+
+    /**
+     * Defines variables that store the current state of the application.
+     */
+    static state = {
 
       // the index of the oldest retrieved message
       lowIndex: 0,
@@ -58,16 +84,40 @@ function initApp() {
         $('#overlay').addClass('d-flex').removeClass('d-none');
         return null;
       })()
-    },
-    requests: {
+    };
+
+    /**
+     * Methods used to create XHRs to the API backend.
+     */
+    static requests = {
+
+      /**
+       * Get any messages sent after the last retrieval.
+       * @returns the request Promise
+       */
       getNewMessages: () => {
         const options = App.helpers.getOptions('GET', `get-new-messages?index=${App.state.highIndex}`);
         return $.ajax(options);
       },
+
+      /**
+       * Get a range of messages previous to an id.
+       *
+       * @param {number} index The id of the current message.
+       * @param {number} count The number of prior messages to get.
+       * @returns the request Promise
+       */
       getMessageRange: (index, count) => {
         const options = App.helpers.getOptions('GET', `getmessages?index=${index}&count=${count}`);
         return $.ajax(options);
       },
+
+      /**
+       * Posts a message to the api.
+       *
+       * @param {string} message The message body.
+       * @returns the request Promise
+       */
       sendMessage: (message) => {
         const options = App.helpers.getOptions('POST', 'sendmessage');
 
@@ -82,8 +132,18 @@ function initApp() {
         options.processData = false;
         options.headers["Content-Type"] = 'application/json';
         console.log(options);
+
+        // return the request
         return $.ajax(options);
       },
+
+      /**
+       * Puts a message to the API.
+       *
+       * @param {string} message The message body.
+       * @param {number} id The id of the message to update.
+       * @returns the request Promise
+       */
       updateMessage: (message, id) => {
         const options = App.helpers.getOptions('PUT', 'updatemessage');
 
@@ -98,14 +158,31 @@ function initApp() {
         options.headers["Content-Type"] = 'application/json';
         return $.ajax(options);
       },
+
+      /**
+       * Deletes a message in the API.
+       *
+       * @param {number} id The id of the message to delete.
+       * @returns the request Promise
+       */
       deleteMessage: (id) => {
         const options = App.helpers.getOptions('DELETE', `deletemessage/${id}`);
         return $.ajax(options);
       }
-    },
-    helpers: {
+    };
 
-      // returns a base ajax options object
+    /**
+     * Common functionality used throughout this App.
+     */
+    static helpers = {
+
+      /**
+       * Get a set of request options for AJAX requests.
+       *
+       * @param {string} method The HTTP request method.
+       * @param {string} uri The resource uri relative to the API root URL.
+       * @returns a base ajax options object
+       */
       getOptions(method, uri) {
         return {
           async: true,
@@ -117,8 +194,16 @@ function initApp() {
           }
         }
       }
-    },
-    actions: {
+    };
+
+    /**
+     * Scripts called from the dom.
+     */
+    static actions = {
+
+      /**
+       * Inital setup. Call when the DOM is loaded.
+       */
       init: () => {
 
         // add the first ten messages to the chat.
@@ -132,11 +217,15 @@ function initApp() {
           if (ev.which === 13) {
             App.actions.sendMessage();
           }
-		});
+        });
 
         // listen for new messages.
-		App.state.listener = setInterval(App.actions.loadRecent, 1500);
+        this.state.listener = setInterval(App.actions.loadRecent, 1500);
       },
+
+      /**
+       * Get new messages.
+       */
       loadRecent: () => {
 
         // send a request for the messages.
@@ -160,6 +249,10 @@ function initApp() {
           }
         });
       },
+
+      /**
+       * Get messages previous to the current oldest message.
+       */
       loadMessages: () => {
 
         // request a range of messages preceeding the current index of the oldest retrieved message
@@ -182,6 +275,10 @@ function initApp() {
           }
         });
       },
+
+      /**
+       * Send a message from the dom to the client.
+       */
       sendMessage: () => {
 
         // get the message from the messaging input
@@ -198,6 +295,12 @@ function initApp() {
           });
         }
       },
+
+      /**
+       * Update a message.
+       * 
+       * @param {number} id The id of the message to update.
+       */
       updateMessage: (id) => {
 
         // get the message from the update input
@@ -217,6 +320,12 @@ function initApp() {
           });
         }
       },
+
+      /**
+       * Delete a message.
+       * 
+       * @param {number} id The id of the target message to delete.
+       */
       deleteMessage: (id) => {
 
         // function to run once the user responds to our sweet alert.
@@ -246,6 +355,10 @@ function initApp() {
         // create the sweet alert.
         swal(swalO).then(confirmDelete);
       },
+
+      /**
+       * Update the username heading on the dom.
+       */
       setName: () => {
 
         // get the nickname from the input.
@@ -259,68 +372,109 @@ function initApp() {
 
         // destroy the editor
         App.dom.destoryEditor();
-		}
-    },
-    dom: {
+      }
+    };
 
-      // adds a list of messages to the top of the chat stack
+    /**
+     * Functions that modify the DOM.
+     */
+    static dom = {
+
+      /**
+       * Adds a list of messages to the top of the chat stack.
+       * 
+       * @param {[*]} data A list of messages to apply to the DOM.
+       */
       prependMessagesToChat: (data) => {
         data.forEach((message) => {
-          const html = App.templates.message(message.sender, message.messagebody, message.id, message.creationdate);
+          const html = App.templates.message(
+            message.sender, message.messagebody, message.id, message.creationdate
+          );
           App.elements.messages.prepend(html);
           App.state.lowIndex = message.id;
         });
       },
 
-      // adds a list of messages to the bottom of the chat stack
+      /**
+       * Adds a list of messages to the bottom of the chat stack.
+       *
+       * @param {[*]} data A list of messages to apply to the DOM.
+       */
       appendMessagesToChat: (data) => {
         console.log(data);
         data.forEach((message) => {
-          const html = App.templates.message(message.sender, message.messagebody, message.sender === App.state.name);
+          const html = App.templates.message(
+            message.sender, message.messagebody, message.sender === App.state.name
+          );
           App.elements.messages.append(html);
         });
         App.dom.scrollToBottom();
       },
 
-      // Empty the messaging input.
+      /**
+       * Empties the messaging input.
+       */
       clearMessageBox: () => {
         App.elements.input.val('');
       },
 
-      // reveal the update message editor
+      /**
+       * Reveals the update message editor.
+       */
       showEditor: (id) => {
         const message = $(`#message-${id}`);
         const text = message.data('message');
         $('body').prepend(App.templates.messageEditor(id, text));
       },
 
-      // remove any overlays and editors.
+      /**
+       * Removes any overlays and editors.
+       */
       destoryEditor: () => {
         $('#overlay').addClass('d-none');
         $('#overlay').removeClass('d-flex');
         $('#overlay').html('');
       },
 
-      // grey out the load message button and disable it's functionality
+      /**
+       * Grey out the load message button and disable its functionality.
+       */
       disableLoader: () => {
         App.elements.loader.addClass('app-disabled');
         App.elements.loader.html('No more messages');
         App.elements.loader.attr('onclick', '');
       },
 
-      // update the chat title
+      /**
+       * Update the chat title.
+       * Uses the state.name property to determine which value to set as the title.
+       */
       updateName: () => {
         App.elements.name.html(App.state.name);
       },
 
-		// scroll to the bottom of the chat.
-		scrollToBottom: () => {
-			App.elements.card.scrollTop(App.elements.card[0].scrollHeight);
-		}
-    },
-    templates: {
+      /**
+       * Scroll to the bottom of the chat.
+       */
+      scrollToBottom: () => {
+        App.elements.card.scrollTop(App.elements.card[0].scrollHeight);
+      }
+    };
 
-      // a new message in the chat
+    /**
+     * Functions for generating HTML used throughout the application.
+     */
+    static templates = {
+
+      /**
+       * Get an html string representing a message.
+       *
+       * @param {string} name The authoring user's name.
+       * @param {string} message The message body.
+       * @param {number} id The id of the message.
+       * @param {Date} creationdate The date the message was sent by the authoring user.
+       * @returns the html string with boud variables.
+       */
       message: (name, message, id, creationdate) => {
         const isUser = name === App.state.name;
         return `
@@ -348,7 +502,11 @@ function initApp() {
           </div>`;
       },
 
-      // the nickname editor
+      /**
+       * Get an HTML representation of the the nickname editor.
+       *
+       * @returns The editor.
+       */
       nickname: () => {
         return `
           <div class="align-items-center h-100 justify-content-around position-absolute w-100 app-overlay d-none" id="overlay">
@@ -367,7 +525,12 @@ function initApp() {
           </div>`;
       },
 
-      // the udpate message editor
+      /**
+       * Get an HTML representation fo the message Editor.
+       * @param {number} id The id of the message.
+       * @param {string} message The message body.
+       * @returns The udpate message editor.
+       */
       messageEditor: (id, message) => {
         return `
           <div class="align-items-center h-100 justify-content-around position-absolute w-100 app-overlay d-flex" id="overlay">
@@ -387,23 +550,39 @@ function initApp() {
             </div>
           </div>`;
       }
-    },
-    elements: {
+    };
 
-      // the messaging input
+    /**
+     * DOM elements accessed in the App.
+     */
+    static elements = {
+
+      /**
+       * the messaging input 
+       */
       input: $('#message-input'),
 
-      // the message box with current messages
+      /**
+       * the message box with current messages
+       */
       messages: $('#message-board'),
 
-      // the user's name on the chat title.
+      /**
+       * the user's name on the chat title.
+       */
       name: $('#display-name'),
 
-      // the "Load new messages" button
+      /**
+       * the "Load new messages" button
+       */
       loader: $('#load-messages'),
 
-      // the entire chat module.
+      /**
+       * the entire chat module.
+       */
       card: $('.card-body')
-    }
+    };
   }
-}
+  window.App = App;
+  window.Utils = Utils;
+};
