@@ -93,6 +93,7 @@ function initApp() {
 
       /**
        * Get any messages sent after the last retrieval.
+       *
        * @returns the request Promise
        */
       getNewMessages: () => {
